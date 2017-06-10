@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+	<style type="text/css">
+    body {
+    	background-color: #bcd35f;
+    }
+
+    h1, h2, h3 {
+    	text-align: center;
+    }
+
+    #turno {
+    	background-color: #ffe680;
+    }
+    #tablero {
+    	background-color: orchid;
+    	height: 260px;
+    	width: 260px;
+    	margin: auto;
+    }
+	
+	.celda {
+		height: 80px;
+		width: 80px;
+		border: solid 1px gray;
+    	display: inline-block;
+	}
+	</style>
+
+<script type="text/javascript">
+//agregarle un evento de click a todas las celdas, seleccionar elementos por clase
+// si se clickea en una celda, ver si es el turno del jugador y si es el turno ubicar el símbolo correspondiente en la celda si es que la celda está vacía.
+//además chequear si se completó tres en línea cada vez que se ubica una ficha en el tablero
+</script>
+
+</head>
+<body>
+<header><h1>Ta Te Ti</h1></header>
+<section id="jugadores"><h2>Computadora juega con O. Humano juega con X</h2></section>
+<section id="turno">Turno X</section>
+<h3>Tablero</h3>
+<section id="tablero">
+	<div class="fila" id="filaCero">
+<div class="celda" id="ceroCero">00</div><div class="celda" id="ceroUno">01</div><div class="celda" id="ceroDos">02</div>
+</div>
+
+<div class="fila" id="filaUno">
+<div class="celda" id="unoCero">10</div><div class="celda" id="unoUno">11</div><div class="celda" id="unoDos">12</div>
+</div>
+
+<div class="fila" id="filaDos">
+<div class="celda" id="dosCero">20</div><div class="celda" id="dosUno">21</div><div class="celda" id="dosDos">22</div>
+</div>
+</section>
+</body>
+</html>
