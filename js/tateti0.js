@@ -2,6 +2,16 @@
 
 /* TATETI */
 
+//tengo una clase de objetos: Tateti, un tateti tiene los atributos o variables de instancia un tablero, tiene fichaComputadora, fichaHumano
+//y después tiene 
+// un constructor, un agregarficha,
+// observadores: obtenerTablero, obtenerFichaHumano, obtenerFichaComputadora, estaOcupada?(tablero, fila, columna),
+// estaTerminado?(tateti), 
+//otras operaciones: diagonales, columnas, filas. Aunque filas sería el mismo tablero.
+
+//cómo escribo una clase en javascript?
+
+//voy a empezar con un objeto individual y después voy a ver cómo es más genérico
 var Tateti = {
 	"tablero" : [[{ocupada: false, ficha: ""},{ocupada: false, ficha: ""}, {ocupada: false, ficha: ""}],
 	              [{ocupada: false, ficha: ""},{ocupada: false, ficha: ""}, {ocupada: false, ficha: ""}],
@@ -65,6 +75,44 @@ function hay3EnLinea(tateti){
 /* setear eventos */
 var IDS = [['ceroCero', 'ceroUno', 'ceroDos'], ['unoCero', 'unoUno', 'unoDos'], ['dosCero', 'dosUno', 'dosDos']];
 
+function setEvents(){
+	//¿puedo usar una clase celda y seleccionar a cada elemento por clase y después a cada uno le paso...
+	//¿cómo le paso la fila y columna que corresponde... pensarlo un poco más
+	//tal vez si uso el array de ids, y hago un for que recorra las filas y otro que para cada fila recorra las columnas y a cada celda le pone onclick = jugadaHumano(id/objeto, fila,columna), tal vez podría pasarle el propio objeto, ¿cómo?
+/*
+	//mientras tanto...
+	var celda00 = document.getElementById('ceroCero');
+	var celda01 = document.getElementById('ceroUno');
+    var celda02 = document.getElementById('ceroDos');
+    var celda10 = document.getElementById('unoCero');
+    var celda11 = document.getElementById('unoUno');
+    var celda12 = document.getElementById('unoDos');
+    var celda20 = document.getElementById('dosCero');
+    var celda21 = document.getElementById('dosUno');
+    var celda22 = document.getElementById('dosDos');
+*/
+
+/* no funciona como esperaba, cuando carga la página se empiezan a mostrar los alerts sin que yo clickee nada y cuando terminan de aparecer y quiero clickear no pasa nada
+
+    for (var f = 0; f < IDS.length; f++){
+    	var fila = IDS[f];
+    	for (var c = 0; c < fila.length; c++){
+           var idCelda = fila[c];
+           var celda = document.getElementById(idCelda);
+           celda.onclick = function(){ alert("fila: " + f + ", " + "columna: " + c);};//jugadaHumano(idCelda, f, c);
+  //tampoco funciona lo de asignarle el f,c que corresponda, cuando clickeo muestran todas fila 3 columna 3!!! ??
+    	}
+    }
+*/
+/*
+		var celda00 = document.getElementById('ceroCero');
+		celda00.onclick = function mostrarAlerta(){
+			alert('soy la 00');
+		}; //si le ponía mostrarAlerta('soy la 00'); y aparte escribía la función, cuando cargaba el documento sin que tuviera que clickear aparecía el alerta
+		¿le voy a tener que implementar ahí mismo la función de la jugadaHumano? queda horrible, si es así, entonces el onclick se lo pongo en el html.
+*/
+}
+
 /* manejar los eventos de la página */
 /* agregarle eventos de click a las celdas/divs de la página*/
 
@@ -80,15 +128,16 @@ function empieza(jugador){ //al clickear en computadora o humano, se envía 'c' 
 }
 
 /* Jugada humano */
+/* completar la parte de mostrar la celda recién completada, podría haber una función mostrar celda */
 
-/*************************
-//acá celda es el objeto mismo
-function jugadaHumano(celda, fila, columna){ //celda sería el objeto de la página web que se clickeó y donde voy a mostrar la ficha o celda sería el id? ¿qué conviene?
+
+//acá celda es idCelda
+function jugadaHumano(idCelda, fila, columna){ //celda sería el objeto de la página web que se clickeó y donde voy a mostrar la ficha o celda sería el id? ¿qué conviene?
 	if (!Tateti.terminado && turno == 'h') {//es el turno del humano
        if (!estaOcupada(Tateti, fila, columna)){
        	    agregarFicha(Tateti, fichaHumano, fila, columna);
        	    //ahora tenés que mostrar la ficha en la pantalla
-       	    mostrarCelda(celda, Tateti.fichaHumano);
+       	    mostrarCelda(idCelda, Tateti.fichaHumano);
        	    if(!estaTerminado(Tateti, ficha, columna)){
        			turno = 'c'; //cuando termina cambia el turno a la computadora.
        			jugadaComputadora(Tateti);// llamás a la jugada de la computadora
@@ -100,17 +149,17 @@ function jugadaHumano(celda, fila, columna){ //celda sería el objeto de la pág
        }
 	}
 }
-*************************/
-function jugadaHumano(celda, fila, columna){
-	mostrarCelda(celda, Tateti.fichaHumano);
-}
 
-function mostrarCelda(celda, ficha){
+//celda es 
+function mostrarCelda(idCelda, ficha){
+	var celda = document.getElementById(idCelda);
 	celda.textContent = ficha;
 }
 
 /* Jugada computadora */
-
+/* ¿cómo voy de fila y columna al div correspondiente para mostrar la ficha que puso la computadora? 
+¿uso un mapa tipo {"ceroCero": {fila: 0, col: 0}} y me las arreglo para recorrer los values
+*/
 function jugadaComputadora(tateti){
 	//se supone que es el turno de la computadora, no habría otra forma de llegar acá si no, del modo en que está escrito
 	
@@ -134,3 +183,6 @@ function jugadaComputadora(tateti){
 	}
 }
 
+window.onload = function(){
+	setEvents();
+}
