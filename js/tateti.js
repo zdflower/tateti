@@ -11,9 +11,9 @@
 
 //constructor de Tateti
 var Tateti = function(fichaH, turno) {
-	this.tablero = [[{ocupada: false, ficha: ""},{ocupada: false, ficha: ""}, {ocupada: false, ficha: ""}],
-	              [{ocupada: false, ficha: ""},{ocupada: false, ficha: ""}, {ocupada: false, ficha: ""}],
-	              [{ocupada: false, ficha: ""},{ocupada: false, ficha: ""}, {ocupada: false, ficha: ""}]];
+	this.tablero = [[{ocupada: false, ficha: "", posicion: [0,0]},{ocupada: false, ficha: "", posicion: [0,1]}, {ocupada: false, ficha: "", posicion: [0,2]}],
+	              [{ocupada: false, ficha: "", posicion: [1,0]},{ocupada: false, ficha: "", posicion: [1,1]}, {ocupada: false, ficha: "", posicion: [1,2]}],
+	              [{ocupada: false, ficha: "", posicion: [2,0]},{ocupada: false, ficha: "", posicion: [2,1]}, {ocupada: false, ficha: "", posicion: [2,2]}]];
 	this.fichaHumano = fichaH;
 	this.fichaComputadora = (fichaH == 'X' )? 'O' : 'X';
 	this.turno = turno, //h humano, c computadora
@@ -100,21 +100,77 @@ var Tateti = function(fichaH, turno) {
 	  return tateti.estaLleno() || tateti.hay3EnLinea();
 	}
 
+	//devuelve una lista de posiciones de celdas vacías que están en líneas con dos celdas ocupadas
+	//acá faltaría pedir que las dos ocupadas sean por el mismo tipo de ficha
+    this.celdasVaciasDeLineasConDosOcupadas = function(ficha){
+    	var lineas = this.columnas().concat(this.tablero).concat(this.diagonales());
+    	var res = [];
+    	for (var linea of lineas){
+    		var tiene = this.tieneUnaSolaDesocupada(linea, ficha); //espero un array vacío o uno no vacío con dos elementos correspondientes a una posición de celda del tablero
+    		if (tiene.length !== 0){
+    			res.push(tiene);
+    		}
+    	}
+    	return res;
+    }
+
+    //¿podría haber dos líneas xx y oo?
+    //¿qué sería mejor? ¿una función que devuelva las posiciones, no importa si son propias o no?
+    this.tieneUnaSolaDesocupada = function(linea, tipoFicha){
+    	//revisar y reescribir esta función
+    	var count = 0;
+    	var posicion = [];
+    	for (var celda of linea){
+    		if (celda.ocupada){
+    			if (celda.ficha === tipoFicha){
+    				count++;
+    			}
+    		} else {
+    			//guardar la celda desocupada
+    			posicion = celda.posicion;
+    		}
+    	}
+    	if (count === 2){
+    		return posicion;
+    	} else {
+    		return [];
+    	}
+    }
+
 	this.hay3EnLinea = function(){
-	  /* completar */
-	  //esto se podría chequear en el momento de la jugada después de llamar a ubicar una ficha, viendo si las de la misma fila, columna o diagonal que la que recién pusiste eran del mismo tipo. 
-	  //recorro las filas
-
-	  //recorro las diagonales
-
-	  //recorro las columnas
-	  return false;
+		var lineas = this.columnas().concat(this.tablero).concat(this.diagonales());
+		for (var linea of lineas){
+			if(this.hay3Iguales(linea)){
+				return true;
+			}
+		}
+		return false;
 	}
 
-	this.hay2EnLinea = function(){
-	  /* completar */
-	  return false;
-	}	
+	this.hay3Iguales = function(linea){
+		//revisar y reescribir para mejor legibilidad y principalmente para que funcione como debiera
+		console.log("línea:");
+		console.log(linea);
+		var count = 0;
+		var ficha = "";
+		for (var celda of linea){
+			if (celda.ocupada){
+				if (ficha !== ""){
+					if(ficha === celda.ficha){
+						count++;
+					} else {
+						return false;
+					}
+				} else {
+					ficha = celda.ficha;
+					count++;
+				}
+			} else {
+				return false;
+			}
+		}
+		return count === 3;
+	}
 	
 	this.desocupada = function(){
 	  //busca y devuelve una celda desocupada
@@ -131,10 +187,16 @@ var Tateti = function(fichaH, turno) {
 	}
 };
 
-/* testeando el tipo Tateti */
+
 var tateti = new Tateti('X', 'h');
+
+/* testeando el tipo Tateti */
 console.log(tateti);
 //tateti.agregarFicha('O', 1,1);
+//tateti.agregarFicha('O', 0,0);
+//tateti.agregarFicha('O', 2,2);
+//console.log("Test de hay 3 iguales (debería decir true): " + tateti.hay3Iguales(['O', 'O', 'O']));
+//console.log("Test de hay 3 en línea (debería decir true): " + tateti.hay3EnLinea());
 //console.log(tateti.diagonales());
 /*
 console.log(tateti.estaOcupada(2,2));
@@ -153,7 +215,6 @@ var IDS = [['ceroCero', 'ceroUno', 'ceroDos'], ['unoCero', 'unoUno', 'unoDos'], 
 /* manejar los eventos de la página */
 
 /* Jugada humano */
-/* completar la parte de mostrar la celda recién completada, podría haber una función mostrar celda */
 
 /*************************
 //acá celda es el objeto mismo
@@ -176,21 +237,29 @@ function jugadaHumano(tateti, celda, fila, columna){ //celda sería el objeto de
 *************************/
 function jugadaHumano(celda, fila, columna){ //tomo el tateti del js
   //antes tenés que ver si no está terminado el juego y si es el turno del jugador
-  if (!tateti.estaOcupada(fila, columna)){
-    tateti.agregarFicha(tateti.fichaHumano, fila, columna);
-    mostrarCelda(celda, tateti.fichaHumano);
-    tateti.jugados += 1;
-    //console.log(tateti.columnas());
-    //antes de cambiar turno tenés que ver si completaste línea o si está todo el tablero ocupado.
-    console.log("lleno? " + tateti.estaLleno());
-    tateti.cambiarTurno();
-    console.log("turno: " + tateti.turno);
-    //llamar a la jugada de la computadora
-    jugadaComputadora(tateti);
-    //console.log(tateti);  
-  } else {
-    console.log('ocupada');
-  }
+if(!tateti.hay3EnLinea() && tateti.jugados < 9){
+	//console.log("¿Hay 3 en línea?: " + tateti.hay3EnLinea()); // no está detectando si hay 3 en línea...
+	  if (!tateti.estaOcupada(fila, columna)){
+	    tateti.agregarFicha(tateti.fichaHumano, fila, columna);
+	    mostrarCelda(celda, tateti.fichaHumano);
+	    tateti.jugados += 1;
+	    //console.log(tateti.columnas());
+	    //console.log("lleno? " + tateti.estaLleno());
+	    if(tateti.estaTerminado()){
+	    	alert("Se terminó.");
+	    } else {
+	    	tateti.cambiarTurno();
+	    	mostrarTurno(tateti);
+	    	console.log("turno: " + tateti.turno);
+	    	console.log(tateti.celdasVaciasDeLineasConDosOcupadas('X'));
+	    	//llamar a la jugada de la computadora
+	    	jugadaComputadora(tateti);
+	    	//console.log(tateti);  
+	    }
+	  } else {
+	    console.log('ocupada');
+	  }
+	}
 }
 
 function mostrarCelda(celda, ficha){
@@ -198,54 +267,57 @@ function mostrarCelda(celda, ficha){
 }
 
 /* Jugada computadora */
-/* ¿cómo voy de fila y columna al div correspondiente para mostrar la ficha que puso la computadora? 
-¿uso un mapa tipo {"ceroCero": {fila: 0, col: 0}} y me las arreglo para recorrer los values
-*/
+
 function jugadaComputadora(tateti){
   console.log(tateti);
   console.log("jugados: " + tateti.jugados);
 	//se supone que es el turno de la computadora, no habría otra forma de llegar acá si no, del modo en que está escrito
-	
 	//esto de chequear la variable terminado es temporal, hasta que vea qué hacer cuando se terminó una partida
-	if(tateti.jugados < 9){
-  //tal vez para testear en principio, en vez de que elija al azar, porque cuando queda una sola ficha, por ahí se queda ciclando mucho,
-  //que las vaya recorriendo todas las celdas desde la primera y que ocupe la primera desocupada que encuentre.
-	  //que podría estar en un método que devuelva una celda desocupada
-	  /*
-		var fila = Math.floor(Math.random() * 3);
-		var columna = Math.floor(Math.random() * 3);
-		console.log("fila: " + fila);
-		console.log("columna: " + columna);
-		console.log(tateti.estaOcupada(fila,columna));
-		while(tateti.estaOcupada(fila,columna)){
-		  fila = Math.floor(Math.random() * 3);
-		  columna = Math.floor(Math.random() * 3);
+	if(tateti.jugados < 9 && !tateti.hay3EnLinea()){
+	//elegir una posicion al azar de entre 	celdasVaciasDeLineasConDosOcupadas(tateti.fichaComputadora); y si es vacío, si no hay ninguna
+	// entonces de celdasVaciasDeLineasConDosOcupadas(tateti.fichaHumano);, es decir si no puede ganar entonces bloquear la posibilidad de ganar del contrario
+	//y si no en la primera desocupada.
+		var posicion = tateti.desocupada();
+		console.log("Posición: " + posicion);
+	    var posiblesParaGanar = tateti.celdasVaciasDeLineasConDosOcupadas(tateti.fichaComputadora);
+	    var posiblesParaBloquear = tateti.celdasVaciasDeLineasConDosOcupadas(tateti.fichaHumano);
+	    console.log("Posibles para ganar: " + posiblesParaGanar);
+	    console.log("Posibles para bloquear: " + posiblesParaBloquear);
+	    //podés no tener ninguna para ganar pero tal vez tampoco para bloquear
+	    if (posiblesParaGanar.length >= 1){
+	    	posicion = posiblesParaGanar[Math.floor(Math.random()* posiblesParaGanar.length)];//elijo al azar una de las celdas
+
+		} else if (posiblesParaBloquear.length >= 1){
+			posicion = posiblesParaBloquear[Math.floor(Math.random()* posiblesParaBloquear.length)];//elijo al azar una de las celdas
+		} else {
+			//antes de dejar que elija cualquiera desocupada, ver si está libre la del medio, la (1,1)
+			if (!tateti.estaOcupada(1,1)) posicion = [1,1];
 		}
-		//encontró una desocupada
-	*/
-	        var posicion = tateti.desocupada();
-	        var fila = posicion[0];
+	    console.log("Posición: " + posicion);
+	    var fila = posicion[0];
 		var columna = posicion[1];
 		tateti.agregarFicha(tateti.fichaComputadora, fila, columna);
 		var celda = document.getElementById(IDS[fila][columna]);
 		mostrarCelda(celda, tateti.fichaComputadora);
 		tateti.jugados +=1;
-		tateti.cambiarTurno();
-		console.log("turno: " + tateti.turno);
-		
-		//si hay dos fichas propias o ajenas en la misma línea, completa la fila
-			// fila = la fila de la celda a completar
-			//columna = la columna de la celda a completar
-		//si no, 
-	    	//elige al azar 2 números entre 0 y 2 para fila y columna
-			// y repite mientras la celda correspondiente a fila y columna elegidos esté ocupada
-			//si sale del loop es que encontró una celda vacía.
-		//en cualquiera de los dos casos, finalmente
-		//tateti.agregarFicha(fichaComputadora, fila, columna);
-		//si no está terminado el juego
-			//pasar el turno al jugador humano
-		//else
-			//tateti.terminado = true;
+		//tal vez antes de cambiar el turno habría que testear si hay 3 en línea o está terminado y si es así, volver a empezar o mostrar algún mensaje.
+		if(tateti.estaTerminado()){
+			alert("Se terminó.");
+		} else {
+			tateti.cambiarTurno();
+			mostrarTurno(tateti);
+			console.log("turno: " + tateti.turno);
+		}
 	}
 }
 
+function mostrarTurno(tateti){
+	var turno;
+	if (tateti.turno == 'h'){
+		turno = tateti.fichaHumano;
+	} else {
+		turno = tateti.fichaComputadora;
+	}
+	var display = document.getElementById('turno');
+	display.textContent = 'Turno: ' + turno;
+}
