@@ -1,0 +1,54 @@
+body {
+	background-color: #209920;
+    }
+
+h1, h2, h3 {
+	text-align: center;
+    }
+
+#turno {
+	background-color: yellow;
+    text-align: center;
+    }
+
+#tablero {
+	height: 248px;
+	width: 248px;
+	margin: 30px auto;
+    }
+	
+.celda {
+    float: left;
+    background: #fff;
+	height: 80px;
+	width: 80px;
+	border: solid 1px gray;
+	}
+
+/* clear para los floats */
+
+#tablero:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+/* mostrar jugadores después de que se elija con qué ficha juega el humano, que la función que maneja el evento del click de los botones para elegir la ficha le cambie el estilo de display a la sección de jugadores y a la de ficha */
+#ficha {
+    margin: 0 auto;
+    text-align: center;
+}
+#ficha h3 {
+    margin: 0;
+}
+#ficha a {
+    display: inline-block;
+    background: #8f746c;
+    padding: 10px;
+    border: 2px solid;
+    margin: 10px auto;
+}
+
+#jugadores {
+    display: none;
+}

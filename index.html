@@ -3,52 +3,28 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<style type="text/css">
-    body {
-    	background-color: #209920;
-    }
-
-    h1, h2, h3 {
-    	text-align: center;
-    }
-
-    #turno {
-    	background-color: yellow;
-    }
-    #tablero {
-    	background-color: orchid;
-    	height: 260px;
-    	width: 260px;
-    	margin: auto;
-    }
-	
-	.celda {
-		height: 80px;
-		width: 80px;
-		border: solid 1px gray;
-    	display: inline-block;
-	}
-	</style>
+	<link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-<header><h1>Ta Te Ti</h1></header>
-<section id="jugadores"><h2>Computadora juega con O. Humano juega con X</h2></section>
-<section id="turno">Turno X</section>
-<h3>Tablero</h3>
-<section id="tablero">
-	<div class="fila" id="filaCero">
-<a class="celda" id="ceroCero" onclick="jugadaHumano(this, 0, 0)">00</a><div class="celda" id="ceroUno" onclick="jugadaHumano(this, 0, 1)">01</div><div class="celda" id="ceroDos" onclick="jugadaHumano(this, 0, 2)">02</div>
-</div>
 
-<div class="fila" id="filaUno">
-<div class="celda" id="unoCero" onclick="jugadaHumano(this, 1, 0)">10</div><div class="celda" id="unoUno" onclick="jugadaHumano(this, 1, 1)">11</div><div class="celda" id="unoDos" onclick="jugadaHumano(this, 1, 2)">12</div>
-</div>
+    <header><h1>Ta Te Ti</h1></header>
 
-<div class="fila" id="filaDos">
-<div class="celda" id="dosCero" onclick="jugadaHumano(this, 2, 0)">20</div><div class="celda" id="dosUno" onclick="jugadaHumano(this, 2, 1)">21</div><div class="celda" id="dosDos" onclick="jugadaHumano(this, 2, 2)">22</div>
-</div>
-</section>
+    <section id="ficha">
+        <h3>Elige ficha:</h3><a onclick="eligeFicha('X')">X</a><a onclick="eligeFicha('O')">O</a>
+    </section>
 
-<script type="text/javascript" src="js/tateti.js"></script>
+    <section id="jugadores">
+    <div id="comp"></div><div id="hum"></div>
+    </section>
+
+    <section id="turno">Turno X</section>
+
+    <section id="tablero">
+
+        <a class="celda" id="ceroCero" onclick="jugadaHumano(this, 0, 0)"></a><div class="celda" id="ceroUno" onclick="jugadaHumano(this, 0, 1)"></div><div class="celda" id="ceroDos" onclick="jugadaHumano(this, 0, 2)"></div><div class="celda" id="unoCero" onclick="jugadaHumano(this, 1, 0)"></div><div class="celda" id="unoUno" onclick="jugadaHumano(this, 1, 1)"></div><div class="celda" id="unoDos" onclick="jugadaHumano(this, 1, 2)"></div><div class="celda" id="dosCero" onclick="jugadaHumano(this, 2, 0)"></div><div class="celda" id="dosUno" onclick="jugadaHumano(this, 2, 1)"></div><div class="celda" id="dosDos" onclick="jugadaHumano(this, 2, 2)"></div>
+
+    </section>
+
+    <script type="text/javascript" src="js/tateti.js"></script>
 </body>
 </html>
