@@ -1,5 +1,12 @@
 /* completar y testear */
 
+
+//quiero que se muestre el tablero pero que no se pueda clickear hasta que se definió la ficha
+
+//hacer posible que a veces empiece la computadora en vez del humano.
+
+var IDS = [['ceroCero', 'ceroUno', 'ceroDos'], ['unoCero', 'unoUno', 'unoDos'], ['dosCero', 'dosUno', 'dosDos']];
+
 /* TATETI */
 
 //tengo una clase de objetos: Tateti, un tateti tiene los atributos o variables de instancia un tablero, tiene fichaComputadora, fichaHumano
@@ -19,7 +26,6 @@ var Tateti = function(fichaH, turno) {
 	this.turno = turno, //h humano, c computadora
     this.jugados = 0; //
 	
-
 
 	//métodos
     this.setFichaHumano = function(ficha){
@@ -211,38 +217,11 @@ var Tateti = function(fichaH, turno) {
 	}
 };
 
-//modificar el código para obtener la ficha con la que juega el humano de lo que indica el jugador en la página web
-//hacer posible que empiece la computadora en vez del humano.
-
-var tateti = new Tateti('X', 'h');
-
-var IDS = [['ceroCero', 'ceroUno', 'ceroDos'], ['unoCero', 'unoUno', 'unoDos'], ['dosCero', 'dosUno', 'dosDos']];
+var tateti = new Tateti('X', 'h');//le pongo una ficha y un turno por default que después es sobreescrito por la elección del usuario.
+//me gustaría encontrar una solución mejor.
 
 
 /* manejar los eventos de la página */
-
-/*
-function reset(){
-	//limpiar todas las celdas de la página
-	//volver a mostrar el mensaje para elegir la ficha con la cual jugar 
-    //elegir uno de los jugadores al azar para que sea el turno
-    limpiarCeldas();
-    var ficha = 'X';
-    var turno = 'h';
-	nuevo = new Tateti(ficha, turno); //esta modificación de tateti ¿permanece una vez que se salió de la función reset?
-	//esta asignación no modifica el tateti de afuera.
-	//tengo que investigar un poco más cómo hacer
-	
-	//¿tendría que hacer una suerte de constructor por copia?
-	//¿cómo hago? recorro cada propiedad y la voy asignando como el nuevo?
-
-	//¿puedo devolver el nuevo tateti y que la asignación se haga desde el llamador?
-
-	//cómo hacés para que no se superpongan cosas, o que se pueda clickear antes de que se resetee, etc.
-	console.log("reset");
-	return nuevo;
-}
-*/
 
 function limpiarCeldas(){
 	//recorrer los ids de las celdas, y para cada celda, ponerle un espacio como contenido o el número que le corresponde
@@ -250,9 +229,7 @@ function limpiarCeldas(){
 	for (var fila of IDS){
 		for (var id of fila){
 			celda = document.getElementById(id);
-			celda.textContent = "";//queda sin nada que mostrar.
-			//si no, tendría que hacer el loop sobre los índices, si quisiera mostrar la posición de la celda. 
-			//con el espacio vacío aparece un espacio entre las celdas, cambia el aspecto de la cuadrícula que se ve en la página
+			celda.textContent = "";
 		}		
 	}
 }
@@ -261,8 +238,10 @@ function limpiarCeldas(){
 function jugadaHumano(celda, fila, columna){ //tomo el tateti del js
   //antes tenés que ver si no está terminado el juego y si es el turno del jugador
 //no chequeo si es el turno del jugador
+    //si en algún momento chequeara de quién es el turno, si no fuera del jugador llamaría a la jugada de la computadora.
+    //pero esto pasaría si se clickea una celda, no tiene mucho sentido...
 console.log("click humano");
-//console.log(tateti);
+
 if(!tateti.hay3EnLinea() && tateti.jugados < 9){
 	console.log("jugada");
     if (!tateti.estaOcupada(fila, columna)){
@@ -272,25 +251,17 @@ if(!tateti.hay3EnLinea() && tateti.jugados < 9){
 	    mostrarCelda(celda, tateti.fichaHumano);
 
 	    if(tateti.estaTerminado()){
-	    	//alert("Se terminó."); //muestra esto antes de mostrar la jugada en la pantalla, ¿cómo lo soluciono?
-            //podría llamar a una función que reinicie el juego con algo del estilo:
-            // tateti = new Tateti('X', 'O', 'h');
-            //podría tomar esos argumentos de lo que indique el usuario, es decir, antes de reemplazar el tateti anterior pedirle input al usuario sobre la ficha
-       	    //terminado = true;
-			//console.log(tateti);
-
-			//Mostrar un mensaje sobre quién ganó.
+            //me gustaría agregar un contador de resultados
        	    console.log("terminó Humano"); //no siempre que termina el humano es que ganó, puede ser que se haya completado el tablero sin completar la línea
-       	    tateti.reset('X', 'h');
+       	    tateti.reset(tateti.fichaHumano, 'h'); 
+            //se mantiene la misma ficha que tenía al principio.
+            //podría haber una función que elija al azar a quién le toca el turno
        	    limpiarCeldas();
 			mostrarTurno(tateti);
-       	    //console.log(tateti);
-
 	    } else {
 	    	tateti.cambiarTurno();
 	    	mostrarTurno(tateti);
 	    	console.log("turno: " + tateti.turno);
-	    	//console.log(tateti.celdasVaciasDeLineasConDosOcupadas('X'));
 	    	//llamar a la jugada de la computadora
 	    	jugadaComputadora(tateti);
 		    }
@@ -308,7 +279,7 @@ function mostrarCelda(celda, ficha){
 
 function jugadaComputadora(tateti){
 	//se podría modularizar un poco, encapsular y abstraer algunas partes de esta función...
-	//console.log(tateti);
+
   	console.log("jugados: " + tateti.jugados);
 	//se supone que es el turno de la computadora, no habría otra forma de llegar acá si no, del modo en que está escrito
 	if(tateti.jugados < 9 && !tateti.hay3EnLinea()){//estos dos deberían estar en estaTerminado y reemplazar la guarda por !estaTerminado
@@ -352,7 +323,7 @@ function jugadaComputadora(tateti){
 
 			//Mostrar un mensaje sobre quién ganó.
 			console.log("terminó Computadora");
-			tateti.reset('X', 'h');//¿habría otra manera de no tener el reset en 2 lugares?
+			tateti.reset(tateti.fichaHumano, 'h');//¿habría otra manera de no tener el reset en 2 lugares?
 			limpiarCeldas();
 			mostrarTurno(tateti);
 			//console.log(tateti);
@@ -365,14 +336,8 @@ function jugadaComputadora(tateti){
 }
 
 function mostrarTurno(tateti){
-	var turno;
-	if (tateti.turno == 'h'){
-		turno = tateti.fichaHumano;
-	} else {
-		turno = tateti.fichaComputadora;
-	}
 	var display = document.getElementById('turno');
-	display.textContent = 'Turno: ' + turno;
+	display.textContent = 'Turno: ' + tateti.turno;
 }
 
 //estaría bueno que lo que obtiene elige ficha lo pase al tateti y se muestre a su vez lo que está en el tateti, que esté unificado, que las modificaciones se hagan en un solo lugar.
@@ -380,18 +345,27 @@ function mostrarTurno(tateti){
 function eligeFicha(tipoFicha){
     
     //dejar de mostrar la opción para elegir ficha y mostrar con qué juega cada uno
+    
+    var celdas = document.getElementsByClassName("celda");
+    //permitir que se muestre cada celda
+    for (var c of celdas){
+        c.style.display = "inline-block";
+    }
+    
     var ficha = document.getElementById("ficha");
     ficha.style.display = "none";
     
     var hum = document.getElementById("hum");
     var comp = document.getElementById("comp");
-    
+    var turno = document.getElementById("turno");
     tateti.setFichaHumano(tipoFicha); //esto setea la ficha del humano y la computadora
-    
+
     hum.textContent = "Humano juega con " + tateti.fichaHumano;
     comp.textContent = "Computadora juega con " + tateti.fichaComputadora; 
-    
+    turno.textContent = "Turno " + tateti.turno;
+     
     jugadores.style.display = "block";
+    turno.style.display = "block";
     
     
 }

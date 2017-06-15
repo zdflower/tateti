@@ -8,7 +8,12 @@ h1, h2, h3 {
 
 #turno {
 	background-color: yellow;
+    margin: 10px auto;
+    padding: 10px;
+    width: 238px;
     text-align: center;
+    font-size: 15pt;
+    display: none;
     }
 
 #tablero {
@@ -18,11 +23,14 @@ h1, h2, h3 {
     }
 	
 .celda {
+    display: none;
     float: left;
     background: #fff;
 	height: 80px;
 	width: 80px;
 	border: solid 1px gray;
+    font-size: 20pt;
+    text-align: center;
 	}
 
 /* clear para los floats */
@@ -47,8 +55,13 @@ h1, h2, h3 {
     padding: 10px;
     border: 2px solid;
     margin: 10px auto;
+    cursor: pointer;
 }
 
 #jugadores {
     display: none;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 15pt;
+    font-weight: bold;
 }
