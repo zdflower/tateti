@@ -2,11 +2,9 @@
 
 var tateti;
 
-/* variables que podría usar en un contador */
 var empates = 0;
 var ganadosComputadora = 0;
 var ganadosHumano = 0;
-/* faltaría escribir una función que determine quién ganó y actualizar el marcador, además agregar un div en el html para mostrar los resultados*/
 
 //ids de las celdas en el html
 var IDS = [['ceroCero', 'ceroUno', 'ceroDos'], ['unoCero', 'unoUno', 'unoDos'], ['dosCero', 'dosUno', 'dosDos']];
@@ -121,7 +119,6 @@ class Tateti {
 		}
 		return false;
 	}
-
     
 	//devuelve una lista de posiciones de celdas vacías que están en líneas con dos celdas ocupadas
     celdasVaciasDeLineasConDosOcupadas(ficha){
@@ -203,27 +200,30 @@ function jugadaHumano(celda, fila, columna){
     //no chequeo si es el turno del jugador
     //si en algún momento chequeara de quién es el turno, si no fuera del jugador llamaría a la jugada de la computadora.
     //pero esto pasaría si se clickea una celda, no tiene mucho sentido...
-    tateti.mostrarTablero();
-    console.log("click humano");
+    
+    //console.log("click humano");
 
     if(!tateti.estaTerminado()){
         if (!tateti.estaOcupada(fila, columna)){
             tateti.agregarFicha(tateti.fichaHumano, fila, columna);
             tateti.jugados += 1;
             mostrarCelda(celda, tateti.fichaHumano);
+            tateti.mostrarTablero();
+            
             if(tateti.estaTerminado()){
-            //me gustaría agregar un contador de resultados
-                console.log("terminó Humano"); //no siempre que termina el humano es que ganó, puede ser que se haya completado el tablero sin completar la línea
+                actualizarMarcador('h');
+                console.log("terminó Humano");
        	        tateti.reset(tateti.fichaHumano, 'h'); 
                 //se mantiene la misma ficha que tenía al principio.
                 //podría haber una función que elija al azar a quién le toca el turno
        	        limpiarCeldas();
 			    mostrarTurno(tateti);
+                mostrarMarcador();
+                console.log("Humano: " + ganadosHumano + ". Computadora: " + ganadosComputadora + ". Empates: " + empates);
             } else {
                 tateti.cambiarTurno();
                 mostrarTurno(tateti);
                 console.log("turno: " + tateti.turno);
-                //llamar a la jugada de la computadora
                 jugadaComputadora(tateti);
 		    }
         } else {
@@ -236,8 +236,6 @@ function jugadaHumano(celda, fila, columna){
 
 function jugadaComputadora(tateti){
 	//se podría modularizar un poco, encapsular y abstraer algunas partes de esta función...
-    tateti.mostrarTablero();
-  	console.log("jugados: " + tateti.jugados);
 	//se supone que es el turno de la computadora, no habría otra forma de llegar acá si no, del modo en que está escrito
 	if(!tateti.estaTerminado()){
 	//toda esta parte debería estar encapsulada en una función, qué es lo que está haciendo la computadora, elegirCelda()
@@ -269,20 +267,41 @@ function jugadaComputadora(tateti){
 		var celda = document.getElementById(IDS[fila][columna]); 
 		mostrarCelda(celda, tateti.fichaComputadora);
 
-		//chequear si con esa jugada se terminó el partido
-
+        tateti.mostrarTablero();
+        
+		//chequea si con esa jugada se terminó el partido
 		if(tateti.estaTerminado()){
-			//Mostrar un mensaje sobre quién ganó.
+            actualizarMarcador('c');
 			console.log("terminó Computadora");
 			tateti.reset(tateti.fichaHumano, 'h');//¿habría otra manera de no tener el reset en 2 lugares?
 			limpiarCeldas();
 			mostrarTurno(tateti);
+            mostrarMarcador();
+            console.log("Humano: " + ganadosHumano + ". Computadora: " + ganadosComputadora + ". Empates: " + empates);
 		} else {
 			tateti.cambiarTurno();
 			mostrarTurno(tateti);
 			console.log("turno: " + tateti.turno);
 		}
 	}
+}
+
+function actualizarMarcador(quienTermino){
+    if (tateti.hay3EnLinea()){
+        (quienTermino == 'h')? ganadosHumano++ : ganadosComputadora++;
+    } else {
+        empates++;
+    }    
+}
+
+function mostrarMarcador(){
+    var ganadosH = document.getElementById('ganadosH');
+    var ganadosC = document.getElementById('ganadosC');
+    var empate = document.getElementById('empate');
+    
+    ganadosC.textContent = "Computadora: " + ganadosComputadora;
+    ganadosH.textContent = "Humano: " + ganadosHumano;
+    empate.textContent = "Empate: " + empates;
 }
 
 function limpiarCeldas(){
@@ -320,10 +339,11 @@ function eligeFicha(tipoFicha){
     var ficha = document.getElementById("ficha");
     ficha.style.display = "none";
     
-    //mostrar jugadores y turno    
+    //mostrar jugadores, turno y marcador
     var hum = document.getElementById("hum");
     var comp = document.getElementById("comp");
     var turno = document.getElementById("turno");
+    var marcador = document.getElementsByClassName('marcador')[0];
     
     hum.textContent = "Humano juega con " + tateti.fichaHumano;
     comp.textContent = "Computadora juega con " + tateti.fichaComputadora; 
@@ -331,6 +351,9 @@ function eligeFicha(tipoFicha){
      
     jugadores.style.display = "block";
     turno.style.display = "block";
+    marcador.style.display = "block";
+    
+    mostrarMarcador();
 }
 
 /* tests */
